@@ -1,10 +1,17 @@
+/*Faça programa para jogar o jogo da velha. Ele deve permitir que dois jogadores façam uma partida do jogo da velha,
+usando o computador para ver o tabuleiro. Cada jogador vai alternadamente informando a posição onde deseja colocar sua peça
+(‘O’ ou ‘X’). O programa deve impedir jogadas inválidas e, determinar automaticamente quando o jogo terminou e quem foi o vencedor
+(jogador 1 ou jogador 2). A cada nova jogada, o programa deve atualizar a situação do tabuleiro na tela. Sugestão: Utilizar uma classe
+para representar o jogo.
+ */
+
 import java.util.Scanner;
 
 public class Questao03 {
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
 
-        //char[][] quadrado = new char[3][3];
+        int[][] exemplo = {{1,2,3},{4,5,6},{7,8,9}};
         char[][] quadrado = {{'_', '_', '_'}, {'_', '_', '_'}, {'_', '_', '_'}};
         System.out.println("Insira o nome do jogador 1:");
         String jogador1 = in.nextLine();
@@ -13,29 +20,33 @@ public class Questao03 {
         String jogador = "";
         char jogada = '0';
 
-        System.out.println("\nInforme um número para cada posição do quadrado conform o exemplo abaixo:");
+        System.out.println("\nInforme a posição em que deseja jogar seguido do símbolo conforme exemplo abaixo (o primeiro jogador sempre começa com x):");
 
-        for (char[] vetor : quadrado) {
-            for (char n : vetor) {
-                System.out.printf("%2c ", n);
+        for (int[] vetor : exemplo) {
+            for (int n : vetor) {
+                System.out.printf("%2d ", n);
             }
             System.out.println();
         }
-        String l1 = "", l2 = "", l3 = "";
-        String c1 = "", c2 = "", c3 = "";
-        String d1 = "", d2 = "";
-        String[] diagonais = {l1, l2, l3, c1, c2, c3, d1, d2};
+        String l1 = " ", l2 = " ", l3 = " ";
+        String c1 = " ", c2 = " ", c3 = " ";
+        String d1 = " ", d2 = " ";
+
 
         int turno = 1;
         int alternador = -1;
+        String jogadorAtual = null;
+        int verificador = 0;
         while (true) {
-            if (alternador == 0)
-                alternador = -1;
             System.out.println();
-            if (turno == 1)
-                System.out.println("Vez do (a) " + jogador1);
-            else if (turno == -1)
-                System.out.println("Vez do (a) " + jogador2);
+            if (turno == 1) {
+                jogadorAtual = jogador1;
+                System.out.println("Vez do (a) " + jogadorAtual);
+            }
+            else if (turno == -1) {
+                jogadorAtual = jogador2;
+                System.out.println("Vez do (a) " + jogadorAtual);
+            }
 
             System.out.println("Escolha uma posição:");
             int posicao = in.nextInt();
@@ -95,6 +106,7 @@ public class Questao03 {
             else {
                 System.out.println("Posição já escolhida.");
             }
+            System.out.println();
             for (char[] vetor : quadrado) {
                 for (char n : vetor) {
                     System.out.printf("%2c ", n);
@@ -103,7 +115,7 @@ public class Questao03 {
             }
             int cont2 = 2;
             for (int i = 0; i < 3; i++) {
-                l1 += jogada;
+                l1 += quadrado[0][i];
                 l2 += quadrado[1][i];
                 l3 += quadrado[2][i];
                 c1 += quadrado[i][0];
@@ -112,56 +124,42 @@ public class Questao03 {
                 d1 += quadrado[i][cont2--];
                 d2 += quadrado[i][i];
             }
-
+            String[] diagonais = {l1, l2, l3, c1, c2, c3, d1, d2};
             for (int i = 0; i < diagonais.length; i++) {
                 if (diagonais[i].equals("xxx") || diagonais[i].equals("ooo"))
                     break;
             }
 
-            System.out.println(l1);
-            System.out.println(l2);
-            System.out.println(l3);
-            System.out.println(c1);
-            System.out.println(c2);
-            System.out.println(c3);
-            System.out.println(d1);
-            System.out.println(d2);
-
-        }
-
-        /*for (int[] vetor : quadrado) {
-            for (int n : vetor) {
-                System.out.printf("%2d ", n);
+            for (int i = 0; i < 8; i++) {
+                if (diagonais[i].substring(diagonais[i].length() - 3).equals("xxx")) {
+                    verificador = 1;
+                }
             }
-            System.out.println();
+            boolean velha = velha(quadrado,0);
+            if (velha == true) {
+                System.out.println("\nDeu Velha!");
+                break;
+            }
+            if (verificador == 1) {
+                System.out.println("\n" + jogadorAtual + " venceu!!!");
+                break;
+            }
+
         }
-
-        int l1 = 0, l2 = 0, l3 = 0;
-        int c1 = 0, c2 = 0, c3 = 0;
-        int d1 = 0, d2 = 0;
-
-        int cont2 = 2;
-        for (int i = 0; i < 3; i++) {
-            l1 += quadrado[0][i];
-            l2 += quadrado[1][i];
-            l3 += quadrado[2][i];
-            c1 += quadrado[i][0];
-            c2 += quadrado[i][1];
-            c3 += quadrado[i][2];
-            d1 += quadrado[i][cont2--];
-            d2 += quadrado[i][i];
-        }
-
-        if (l1==l2&&l2==l3&&l3==c1&&c1==c2&&c2==c3&&c3==d1&&d1==d2)
-            System.out.println("\nÉ um quadrado mágico!");
-        else
-            System.out.println("\nNão é um quadrado mágico!");
-
 
         in.close();
-
-
-
-        in.close();*/
+    }
+    public static boolean velha(char[][] tabuleiro, int contador) {
+        for (char[] vetor : tabuleiro) {
+            for (char jogada : vetor) {
+                if (jogada != '_')
+                    contador++;
+            }
+        }
+        if (contador == 9) {
+            return true;
+        }
+        else
+            return false;
     }
 }
