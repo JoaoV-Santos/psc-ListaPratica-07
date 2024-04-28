@@ -1,0 +1,1 @@
+# Lista de Exercícios 07 PSC - Professor Fabrício Valadares
